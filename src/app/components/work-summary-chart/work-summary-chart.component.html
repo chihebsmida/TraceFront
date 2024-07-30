@@ -1,7 +1,14 @@
-<div>
+<div class="flex">
   <label for="user-select">Sélectionnez un utilisateur :</label>
   <select id="user-select" [(ngModel)]="selectedUser" (change)="updateChart()">
     <option *ngFor="let user of users" [value]="user">{{ user }}</option>
+  </select>
+
+  <label for="summary-type-select">Sélectionnez le type de résumé :</label>
+  <select id="summary-type-select" [(ngModel)]="selectedSummaryType" (change)="fetchData()">
+    <option value="daily">Quotidien</option>
+    <option value="weekly">Hebdomadaire</option>
+    <option value="monthly">Mensuel</option>
   </select>
 </div>
 

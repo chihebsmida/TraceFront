@@ -7,11 +7,15 @@ import { Observable } from 'rxjs';
 })
 export class WorkSummaryService {
 
-  private apiUrl = 'http://localhost:8080/weekly-work-summary';
+  private apiUrl = 'http://localhost:8080';
  #http= inject(HttpClient);
-
-
   getWeeklyWorkSummary(): Observable<any> {
-    return this.#http.get<any>(this.apiUrl);
+    return this.#http.get<any>(this.apiUrl+'/weekly-work-summary');
+  }
+  getMonthlyWorkSummary(): Observable<any> {
+    return this.#http.get<any>(this.apiUrl+'/monthly-work-summary');
+  }
+  getDailyWorkSummary(): Observable<any> {
+    return this.#http.get<any>(this.apiUrl+'/daily-work-summary');
   }
 }

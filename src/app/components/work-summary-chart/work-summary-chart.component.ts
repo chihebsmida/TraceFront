@@ -27,19 +27,38 @@ Chart.register(
 })
 export class WorkSummaryChartComponent implements OnInit {
   public chart: any;
-  workSummary: any;
-  selectedUser: string='';
-  users: string[] = [];
+  public workSummary: any;
+  public selectedUser: string = '';
+  public users: string[] = [];
+  public selectedSummaryType: string = 'daily'; // Par défaut à 'daily'
 
   constructor(private workSummaryService: WorkSummaryService) { }
 
   ngOnInit(): void {
-    this.workSummaryService.getWeeklyWorkSummary().subscribe(
+    this.fetchData(); // Charger les données initiales
+  }
+
+  fetchData(): void {
+    let summaryObservable;
+    switch (this.selectedSummaryType) {
+      case 'weekly':
+        summaryObservable = this.workSummaryService.getWeeklyWorkSummary();
+        break;
+      case 'monthly':
+        summaryObservable = this.workSummaryService.getMonthlyWorkSummary();
+        break;
+      default:
+        summaryObservable = this.workSummaryService.getDailyWorkSummary();
+    }
+
+    summaryObservable.subscribe(
       data => {
         this.workSummary = data;
         this.users = Object.keys(this.workSummary);
-        this.selectedUser = this.users[0]; // Sélectionne le premier utilisateur par défaut
-        this.updateChart();
+        // Initialiser selectedUser seulement s'il est vide
+        if (this.selectedUser === '') {
+          this.selectedUser = this.users[0] || ''; // Sélectionner le premier utilisateur par défaut
+        }        this.updateChart();
       },
       error => console.error('There was an error!', error)
     );
@@ -51,7 +70,7 @@ export class WorkSummaryChartComponent implements OnInit {
     const inactiveDurations: { x: string, y: number, label: string }[] = [];
     const labels: string[] = [];
 
-    if (this.workSummary[this.selectedUser]) {
+    if (this.workSummary && this.workSummary[this.selectedUser]) {
       for (const date in this.workSummary[this.selectedUser]) {
         if (this.workSummary[this.selectedUser].hasOwnProperty(date)) {
           const workDuration = this.convertDuration(this.workSummary[this.selectedUser][date].workDuration);
@@ -94,7 +113,7 @@ export class WorkSummaryChartComponent implements OnInit {
         plugins: {
           title: {
             display: true,
-            text: 'Résumé hebdomadaire du travail par semaine pour ' + this.selectedUser,
+            text: 'Résumé ' + this.selectedSummaryType + ' du travail pour ' + this.selectedUser,
             font: {
               size: 18
             }
@@ -116,8 +135,6 @@ export class WorkSummaryChartComponent implements OnInit {
     });
   }
 
-
-
   convertDuration(duration: string): number {
     const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?/);
     if (match) {
@@ -136,6 +153,4 @@ export class WorkSummaryChartComponent implements OnInit {
     const secs = Math.floor(seconds % 60);
     return `${hours}h ${minutes}m ${secs}s`;
   }
-
-
 }
