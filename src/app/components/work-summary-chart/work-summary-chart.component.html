@@ -1,0 +1,10 @@
+<div>
+  <label for="user-select">Sélectionnez un utilisateur :</label>
+  <select id="user-select" [(ngModel)]="selectedUser" (change)="updateChart()">
+    <option *ngFor="let user of users" [value]="user">{{ user }}</option>
+  </select>
+</div>
+
+<div class="chart-container">
+  <canvas id="MyChart"></canvas>
+</div>
