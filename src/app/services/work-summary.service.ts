@@ -18,4 +18,17 @@ export class WorkSummaryService {
   getDailyWorkSummary(): Observable<any> {
     return this.#http.get<any>(this.apiUrl+'/daily-work-summary');
   }
+
+  getDailyWorkSummaryByMachineAndEmployee(selectedUser: string, selectedMachine: string) {
+    return this.#http.get<any>(this.apiUrl+'/daily-work-summary-by-employee-and-machine?employerName='+selectedUser+'&machineName='+selectedMachine);
+  }
+  getWeeklyWorkSummaryByMachineAndEmployee(selectedUser: string, selectedMachine: string) {
+    return this.#http.get<any>(this.apiUrl+'/weekly-work-summary-by-employee-and-machine?employerName='+selectedUser+'&machineName='+selectedMachine);
+  }
+  getMonthlyWorkSummaryByMachineAndEmployee(selectedUser: string, selectedMachine: string) {
+    return this.#http.get<any>(this.apiUrl+'/monthly-work-summary-by-employee-and-machine?employerName='+selectedUser+'&machineName='+selectedMachine);
+  }
+  getDIstinctMachineNames( employerName: string): Observable<string[]> {
+    return this.#http.get<any>(this.apiUrl+'/findDistinctMachineName?employerName='+employerName);
+  }
 }

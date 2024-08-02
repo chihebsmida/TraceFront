@@ -2,8 +2,9 @@
 .flex
 {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 div {
   margin: 20px;
@@ -17,7 +18,7 @@ label {
   font-weight: bold;
   margin-right: 10px;
   display: inline-block;
-  width: 200px; /* Largeur fixe pour les labels */
+  width: 250px; /* Largeur fixe pour les labels */
 }
 
 /* Style des sélecteurs */

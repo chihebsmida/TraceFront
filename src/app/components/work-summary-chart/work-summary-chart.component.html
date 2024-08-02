@@ -1,6 +1,6 @@
 <div class="flex">
   <label for="user-select">Sélectionnez un utilisateur :</label>
-  <select id="user-select" [(ngModel)]="selectedUser" (change)="updateChart()">
+  <select id="user-select" [(ngModel)]="selectedUser" (change)="onChangeUser()">
     <option *ngFor="let user of users" [value]="user">{{ user }}</option>
   </select>
 
@@ -10,8 +10,11 @@
     <option value="weekly">Hebdomadaire</option>
     <option value="monthly">Mensuel</option>
   </select>
-</div>
 
-<div class="chart-container">
-  <canvas id="MyChart"></canvas>
+  <label for="machine-select">Sélectionnez une machine :</label>
+  <select id="machine-select" [(ngModel)]="selectedMachine" (change)="updateChartWithUserAndMachine()">
+    <option value="all">Total</option>
+    <option *ngFor="let machine of machines" [value]="machine">{{ machine }}</option>
+  </select>
 </div>
+<canvas id="MyChart"></canvas>

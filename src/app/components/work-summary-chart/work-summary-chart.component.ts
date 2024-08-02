@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { WorkSummaryService } from "../../services/work-summary.service";
 import { NgForOf, NgIf } from "@angular/common";
 import { Chart, CategoryScale, LinearScale, BarController, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import {FormsModule} from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 
 Chart.register(
   CategoryScale,
@@ -23,16 +23,17 @@ Chart.register(
     FormsModule,
   ],
   templateUrl: './work-summary-chart.component.html',
-  styleUrl: './work-summary-chart.component.css'
+  styleUrls: ['./work-summary-chart.component.css']
 })
 export class WorkSummaryChartComponent implements OnInit {
   public chart: any;
   public workSummary: any;
   public selectedUser: string = '';
+  public selectedMachine: string = 'all'; // Définir par défaut sur 'all' pour afficher toutes les machines
   public users: string[] = [];
+  public machines: string[] = []; // Liste des machines pour l'utilisateur sélectionné
   public selectedSummaryType: string = 'daily'; // Par défaut à 'daily'
-
-  constructor(private workSummaryService: WorkSummaryService) { }
+  workSummaryService = inject(WorkSummaryService);
 
   ngOnInit(): void {
     this.fetchData(); // Charger les données initiales
@@ -40,47 +41,101 @@ export class WorkSummaryChartComponent implements OnInit {
 
   fetchData(): void {
     let summaryObservable;
-    switch (this.selectedSummaryType) {
-      case 'weekly':
-        summaryObservable = this.workSummaryService.getWeeklyWorkSummary();
-        break;
-      case 'monthly':
-        summaryObservable = this.workSummaryService.getMonthlyWorkSummary();
-        break;
-      default:
-        summaryObservable = this.workSummaryService.getDailyWorkSummary();
+
+    if (this.selectedMachine !== 'all') {
+      switch (this.selectedSummaryType) {
+        case 'weekly':
+          summaryObservable = this.workSummaryService.getWeeklyWorkSummaryByMachineAndEmployee(this.selectedUser, this.selectedMachine);
+          break;
+        case 'monthly':
+          summaryObservable = this.workSummaryService.getMonthlyWorkSummaryByMachineAndEmployee(this.selectedUser, this.selectedMachine);
+          break;
+        default:
+          summaryObservable = this.workSummaryService.getDailyWorkSummaryByMachineAndEmployee(this.selectedUser, this.selectedMachine);
+      }
+    } else {
+      // Appel à l'API générale pour tous les résumés (sans machine spécifique)
+      switch (this.selectedSummaryType) {
+        case 'weekly':
+          summaryObservable = this.workSummaryService.getWeeklyWorkSummary();
+          break;
+        case 'monthly':
+          summaryObservable = this.workSummaryService.getMonthlyWorkSummary();
+          break;
+        default:
+          summaryObservable = this.workSummaryService.getDailyWorkSummary();
+      }
     }
 
     summaryObservable.subscribe(
       data => {
         this.workSummary = data;
-        this.users = Object.keys(this.workSummary);
+        if (this.selectedMachine === 'all') {
+          this.users = Object.keys(this.workSummary);
+        }
         // Initialiser selectedUser seulement s'il est vide
         if (this.selectedUser === '') {
           this.selectedUser = this.users[0] || ''; // Sélectionner le premier utilisateur par défaut
-        }        this.updateChart();
+        }
+        // Mettre à jour la liste des machines
+        this.getMachines(this.selectedUser);
+        this.updateChart();
       },
       error => console.error('There was an error!', error)
     );
   }
 
-  updateChart(): void {
-    const workDurations: { x: string, y: number, label: string }[] = [];
+getMachines(employerName: string) {
+    this.workSummaryService.getDIstinctMachineNames(employerName).subscribe(
+      data => {
+        this.machines = data;
+      },
+      error => console.error('There was an error!', error)
+    );
+}
+
+  // Méthode pour mettre à jour le graph avec choix de l'utilisateur et machine
+  updateChartWithUserAndMachine(): void
+  {
+    this.fetchData();
+    this.updateChart();
+  }
+
+  updateChart(): void {const workDurations: { x: string, y: number, label: string }[] = [];
     const pauseDurations: { x: string, y: number, label: string }[] = [];
     const inactiveDurations: { x: string, y: number, label: string }[] = [];
     const labels: string[] = [];
 
-    if (this.workSummary && this.workSummary[this.selectedUser]) {
-      for (const date in this.workSummary[this.selectedUser]) {
-        if (this.workSummary[this.selectedUser].hasOwnProperty(date)) {
-          const workDuration = this.convertDuration(this.workSummary[this.selectedUser][date].workDuration);
-          const pauseDuration = this.convertDuration(this.workSummary[this.selectedUser][date].pauseDuration);
-          const inactiveDuration = this.convertDuration(this.workSummary[this.selectedUser][date].inactiveDuration);
+    // Cas où une machine spécifique est sélectionnée
+    if (this.selectedMachine !== 'all') {
+      if (this.workSummary) {
+        for (const date in this.workSummary) {
+          if (this.workSummary.hasOwnProperty(date)) {
+            const workDuration = this.convertDuration(this.workSummary[date].workDuration);
+            const pauseDuration = this.convertDuration(this.workSummary[date].pauseDuration);
+            const inactiveDuration = this.convertDuration(this.workSummary[date].inactiveDuration);
 
-          labels.push(date);
-          workDurations.push({ x: date, y: workDuration, label: this.formatDuration(workDuration) });
-          pauseDurations.push({ x: date, y: pauseDuration, label: this.formatDuration(pauseDuration) });
-          inactiveDurations.push({ x: date, y: inactiveDuration, label: this.formatDuration(inactiveDuration) });
+            labels.push(date);
+            workDurations.push({ x: date, y: workDuration, label: this.formatDuration(workDuration) });
+            pauseDurations.push({ x: date, y: pauseDuration, label: this.formatDuration(pauseDuration) });
+            inactiveDurations.push({ x: date, y: inactiveDuration, label: this.formatDuration(inactiveDuration) });
+          }
+        }
+      }
+    } else {
+      // Cas où toutes les machines sont sélectionnées
+      if (this.workSummary && this.workSummary[this.selectedUser]) {
+        for (const date in this.workSummary[this.selectedUser]) {
+          if (this.workSummary[this.selectedUser].hasOwnProperty(date)) {
+            const workDuration = this.convertDuration(this.workSummary[this.selectedUser][date].workDuration);
+            const pauseDuration = this.convertDuration(this.workSummary[this.selectedUser][date].pauseDuration);
+            const inactiveDuration = this.convertDuration(this.workSummary[this.selectedUser][date].inactiveDuration);
+
+            labels.push(date);
+            workDurations.push({ x: date, y: workDuration, label: this.formatDuration(workDuration) });
+            pauseDurations.push({ x: date, y: pauseDuration, label: this.formatDuration(pauseDuration) });
+            inactiveDurations.push({ x: date, y: inactiveDuration, label: this.formatDuration(inactiveDuration) });
+          }
         }
       }
     }
@@ -88,6 +143,10 @@ export class WorkSummaryChartComponent implements OnInit {
     if (this.chart) {
       this.chart.destroy(); // Détruire le graphique précédent avant de créer un nouveau
     }
+    // Déterminer le texte du titre
+    const titleText = this.selectedMachine === 'all'
+      ? `Résumé ${this.selectedSummaryType} du travail pour l'employé ${this.selectedUser} sur toutes les machines`
+      : `Résumé ${this.selectedSummaryType} du travail pour l'employé ${this.selectedUser} sur la machine ${this.selectedMachine}`;
 
     this.chart = new Chart("MyChart", {
       type: 'bar',
@@ -113,7 +172,7 @@ export class WorkSummaryChartComponent implements OnInit {
         plugins: {
           title: {
             display: true,
-            text: 'Résumé ' + this.selectedSummaryType + ' du travail pour ' + this.selectedUser,
+            text: titleText,
             font: {
               size: 18
             }
@@ -152,5 +211,10 @@ export class WorkSummaryChartComponent implements OnInit {
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
     return `${hours}h ${minutes}m ${secs}s`;
+  }
+
+  onChangeUser() {
+    this.selectedMachine='all'; // Réinitialiser la machine sélectionnée à 'all'
+    this.fetchData();
   }
 }
