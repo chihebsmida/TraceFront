@@ -1,0 +1,17 @@
+
+<div class="flex">
+  <label for="machine-select">Sélectionnez un utilisateur :</label>
+  <select id="machine-select" [(ngModel)]="selectedMachine" (change)="onMachineChange()">
+    <option *ngFor="let machine of machineNames" [value]="machine">{{ machine }}</option>
+  </select>
+  <label for="summary-type-select">Sélectionnez le type de résumé :</label>
+  <select id="summary-type-select" [(ngModel)]="selectedSummaryType" (change)="fetchWorkSummary()">
+    <option value="daily">Quotidien</option>
+    <option value="weekly">Hebdomadaire</option>
+    <option value="monthly">Mensuel</option>
+  </select>
+</div>
+  <canvas id="MyChart2"></canvas>
+  <button (click)="generateReport()">Générer un rapport PDF</button>
+
+

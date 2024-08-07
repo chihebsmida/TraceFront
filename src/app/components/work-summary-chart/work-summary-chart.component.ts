@@ -85,14 +85,14 @@ export class WorkSummaryChartComponent implements OnInit {
     );
   }
 
-getMachines(employerName: string) {
+  getMachines(employerName: string) {
     this.workSummaryService.getDIstinctMachineNames(employerName).subscribe(
       data => {
         this.machines = data;
       },
       error => console.error('There was an error!', error)
     );
-}
+  }
 
   // Méthode pour mettre à jour le graph avec choix de l'utilisateur et machine
   updateChartWithUserAndMachine(): void
