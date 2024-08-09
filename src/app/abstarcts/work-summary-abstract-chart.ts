@@ -72,10 +72,18 @@ export  abstract class ChartComponent
         responsive: true,
         scales: {
           x: {
-            beginAtZero: true
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Date' // Titre de l'axe X
+            }
           },
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Durée en secondes' // Titre de l'axe Y
+            }
           }
         },
         aspectRatio: 2.5,
