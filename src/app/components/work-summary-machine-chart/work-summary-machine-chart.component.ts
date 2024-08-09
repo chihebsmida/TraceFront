@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {NgForOf} from "@angular/common";
-import {ChartComponent} from "../work-summary-abstract-chart";
+import {ChartComponent} from "../../abstarcts/work-summary-abstract-chart";
+import {MatCard, MatCardContent, MatCardHeader} from "@angular/material/card";
+import {MatIcon} from "@angular/material/icon";
+import {MatOption} from "@angular/material/autocomplete";
+import {MatFormField, MatLabel, MatSelect} from "@angular/material/select";
+import {MatButton, MatFabButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-work-summary-machine-chart',
@@ -9,7 +14,17 @@ import {ChartComponent} from "../work-summary-abstract-chart";
   templateUrl: './work-summary-machine-chart.component.html',
   imports: [
     FormsModule,
-    NgForOf
+    NgForOf,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatIcon,
+    MatOption,
+    MatSelect,
+    MatLabel,
+    MatFormField,
+    MatFabButton,
+    MatButton
   ],
   styleUrls: ['./work-summary-machine-chart.component.css']
 })
@@ -22,7 +37,7 @@ export class WorkSummaryMachineChartComponent  extends  ChartComponent implement
   ngOnInit(): void {
     this.initilizeMachineNamesAndData();
   }
-  fetchWorkSummary(): void {
+  fetchData(): void {
     let summaryObservable;
     const titleText =
       `Résumé ${this.selectedSummaryType} du travail pour la machine ${this.selectedMachine}`;
@@ -46,7 +61,7 @@ export class WorkSummaryMachineChartComponent  extends  ChartComponent implement
   }
 
   onMachineChange(): void {
-    this.fetchWorkSummary();
+    this.fetchData();
   }
   initilizeMachineNamesAndData(): void {
     this.workSummaryService.getDistinctAllMachineNames().subscribe(
@@ -54,7 +69,7 @@ export class WorkSummaryMachineChartComponent  extends  ChartComponent implement
         this.machineNames = data || [];
         if(this.machineNames.length>0)
         this.selectedMachine = this.machineNames[0] || ''; // Sélectionner le premier utilisateur par défaut
-        this.fetchWorkSummary();
+        this.fetchData();
       },
       error => console.error('Erreur lors du chargement des noms de machines!', error)
     );

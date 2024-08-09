@@ -14,17 +14,28 @@ Chart.register(
   Legend
 );
 
-export class ChartComponent
+export  abstract class ChartComponent
 {
   protected workSummary: any;
   protected selectedUser: string = '';
   protected selectedMachine: string = 'all'; // Définir par défaut sur 'all' pour afficher toutes les machines
   protected users: string[] = [];
   protected machines: string[] = []; // Liste des machines pour l'utilisateur sélectionné
+
+  protected summaryTypes = new Map<string, string>([
+  ['daily', 'Quotidien'],
+  ['weekly', 'Hebdomadaire'],
+  ['monthly', 'Mensuel']
+]);
+  protected summaryTypesKeys() {
+    return Array.from(this.summaryTypes.keys());
+  }
+
   protected selectedSummaryType: string = 'daily'; // Par défaut à 'daily'
   public chart: any;
   workSummaryService = inject(WorkSummaryService);
   protected updateChart(graphiqueName:string,title:string): void {
+    console.log(this.workSummary);
     const workDurations: { x: string, y: number, label: string }[] = [];
     const pauseDurations: { x: string, y: number, label: string }[] = [];
     const inactiveDurations: { x: string, y: number, label: string }[] = [];
@@ -133,5 +144,7 @@ export class ChartComponent
       });
     }
   }
+  // Méthode abstraite pour charger les données selon le type de graphique
+  abstract fetchData(): void;
 
 }

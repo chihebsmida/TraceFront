@@ -1,17 +1,30 @@
-
+<mat-card-header class="titre">
+  Dashboard de résumé de travail par machine
+</mat-card-header>
+<mat-card appearance="outlined">
+  <mat-card-content>
 <div class="flex">
-  <label for="machine-select">Sélectionnez un utilisateur :</label>
-  <select id="machine-select" [(ngModel)]="selectedMachine" (change)="onMachineChange()">
-    <option *ngFor="let machine of machineNames" [value]="machine">{{ machine }}</option>
-  </select>
-  <label for="summary-type-select">Sélectionnez le type de résumé :</label>
-  <select id="summary-type-select" [(ngModel)]="selectedSummaryType" (change)="fetchWorkSummary()">
-    <option value="daily">Quotidien</option>
-    <option value="weekly">Hebdomadaire</option>
-    <option value="monthly">Mensuel</option>
-  </select>
+  <mat-form-field appearance="outline">
+    <mat-label>Sélectionnez une machine</mat-label>
+    <mat-select [(value)]="selectedMachine" (selectionChange)="onMachineChange()">
+      <mat-option *ngFor="let machine of machineNames" [value]="machine">{{ machine }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Sélectionnez le type de résumé</mat-label>
+    <mat-select [(value)]="selectedSummaryType" (selectionChange)="fetchData()">
+      <mat-option *ngFor="let key of summaryTypesKeys()" [value]="key">{{ summaryTypes.get(key) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
+  </mat-card-content>
+</mat-card>
   <canvas id="MyChart2"></canvas>
-  <button (click)="generateReport('MyChart2')">Générer un rapport PDF</button>
 
+<div class="left-align">
+  <button mat-flat-button color="primary" (click)="generateReport('MyChart2')">
+    <mat-icon>save_alt</mat-icon>
+    Générer un rapport PDF
+  </button>
+</div>
 
