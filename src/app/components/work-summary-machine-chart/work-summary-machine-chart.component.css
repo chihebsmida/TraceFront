@@ -5,48 +5,66 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-}
-div {
-  margin: 20px;
-  padding: 10px;
-  font-family: Arial, sans-serif;
-}
-select {
-  margin-right: 75px;
-}
 
-/* Style des labels */
-label {
-  font-size: 16px;
+}
+.titre
+{
+  font-size: 30px;
+  color: blue;
   font-weight: bold;
-  margin-right: 10px;
-  display: inline-block;
-  width: 250px; /* Largeur fixe pour les labels */
+  margin-bottom: 20px;
+  font-weight: bold;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  text-decoration: underline;
+
 }
 
-/* Style des sélecteurs */
-select {
-  font-size: 16px;
-  padding: 5px;
-  margin-bottom: 20px; /* Espacement entre les éléments */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 200px; /* Largeur fixe pour les sélecteurs */
+
+
+
+
+
+
+
+
+section {
+  display: table;
 }
 
-/* Style du conteneur du graphique */
-.chart-container {
-  margin-top: 20px;
+.example-label {
+  display: table-cell;
+  font-size: 14px;
+  margin-left: 8px;
+  min-width: 120px;
 }
 
-/* Style du canvas pour le graphique */
-canvas {
-  display: block;
-  max-width: 100%; /* Assurer que le graphique est responsive */
-  height: auto;
+.example-button-row {
+  display: table-cell;
+  max-width: 600px;
 }
 
-/* Style des marges des éléments pour une meilleure présentation */
-div > * {
-  margin-bottom: 10px;
+.example-button-row .mat-mdc-button-base {
+  margin: 8px 8px 8px 0;
 }
+
+.example-flex-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.example-button-container {
+  display: flex;
+  justify-content: center;
+  width: 120px;
+}
+.left-align {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  margin-right: 30px;
+}
+
+

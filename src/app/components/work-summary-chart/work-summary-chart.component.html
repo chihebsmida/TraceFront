@@ -1,23 +1,41 @@
+<mat-card-header class="titre">
+  Dashboard de résumé de travail par utilisateur
+</mat-card-header>
+<mat-card appearance="outlined">
+  <mat-card-content>
 <div class="flex">
-  <label for="user-select">Sélectionnez un utilisateur :</label>
-  <select id="user-select" [(ngModel)]="selectedUser" (change)="onChangeUser()">
-    <option *ngFor="let user of users" [value]="user">{{ user }}</option>
-  </select>
-
-  <label for="summary-type-select">Sélectionnez le type de résumé :</label>
-  <select id="summary-type-select" [(ngModel)]="selectedSummaryType" (change)="fetchData()">
-    <option value="daily">Quotidien</option>
-    <option value="weekly">Hebdomadaire</option>
-    <option value="monthly">Mensuel</option>
-  </select>
-
-  <label for="machine-select">Sélectionnez une machine :</label>
-  <select id="machine-select" [(ngModel)]="selectedMachine" (change)="updateChartWithUserAndMachine()">
-    <option value="all">Total</option>
-    <option *ngFor="let machine of machines" [value]="machine">{{ machine }}</option>
-  </select>
+  <mat-form-field appearance="outline">
+    <mat-label>Sélectionnez un utilisateur</mat-label>
+    <mat-select [(ngModel)]="selectedUser" (selectionChange)="onChangeUser()">
+      <mat-option *ngFor="let user of users" [value]="user">{{ user }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Sélectionnez le type de résumé</mat-label>
+    <mat-select [(value)]="selectedSummaryType" (selectionChange)="fetchData()">
+      <mat-option *ngFor="let key of summaryTypesKeys()" [value]="key">{{ summaryTypes.get(key) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Sélectionnez une machine</mat-label>
+    <mat-select [(ngModel)]="selectedMachine" (selectionChange)="fetchData()">
+      <mat-option value="all">Total</mat-option>
+      <mat-option *ngFor="let machine of machines" [value]="machine">{{ machine }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
+  </mat-card-content>
+</mat-card>
 <canvas id="MyChart"></canvas>
-<button>Générer rapport</button>
+
+<div class="left-align">
+  <button mat-flat-button color="primary" (click)="generateReport('MyChart')">
+    <mat-icon>save_alt</mat-icon>
+    Générer un rapport PDF
+  </button>
+</div>
+
+
+
 
 
