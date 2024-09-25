@@ -3,6 +3,7 @@ import { WorkSummaryService } from "../../services/work-summary.service";
 import { NgForOf, NgIf } from "@angular/common";
 import { Chart, CategoryScale, LinearScale, BarController, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { FormsModule } from "@angular/forms";
+import {KeycloakOperationService} from "../../services/keycloak.service";
 
 Chart.register(
   CategoryScale,
@@ -34,14 +35,12 @@ export class WorkSummaryChartComponent implements OnInit {
   public machines: string[] = []; // Liste des machines pour l'utilisateur sélectionné
   public selectedSummaryType: string = 'daily'; // Par défaut à 'daily'
   workSummaryService = inject(WorkSummaryService);
-
   ngOnInit(): void {
     this.fetchData(); // Charger les données initiales
   }
 
   fetchData(): void {
     let summaryObservable;
-
     if (this.selectedMachine !== 'all') {
       switch (this.selectedSummaryType) {
         case 'weekly':
