@@ -1,0 +1,19 @@
+.mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 10%;
+}
+
+.title {
+  font-size: 1.5em;
+}
+
+
+
+
+.user-info mat-icon {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+

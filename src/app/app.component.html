@@ -1,3 +1,20 @@
+<mat-toolbar color="primary">
+  <span class="title">TraceMachine Application</span>
+  <!-- User Info Section -->
+  <div *ngIf="userName && userEmail">
+      <mat-icon>supervised_user_circle</mat-icon>
+      <span>{{ userName }}</span>
+  </div>
+  <div>
+  <button mat-flat-button (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    logout
+  </button>
+  </div>
+</mat-toolbar>
+
+<div *ngIf="this.keycloakService.isHasRole('AdminTrace')">
 <app-work-summary-chart></app-work-summary-chart>
+</div>
 <app-work-summary-machine-chart></app-work-summary-machine-chart>
 <router-outlet />
